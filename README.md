@@ -1,6 +1,6 @@
 # ENTREGA MODULO INTEGRACION CONTINUA 
 
-# AUTORES: Diana Gonzalez, Niyireth Lorena Cortes, Ricardo Buitrago, Rubio  Juragaro ,Angie Milena Quitora. 
+# AUTORES: Diana Carolina Gonzalez, Niyireth Lorena Cortes, Rubio  Juragaro ,Angie Milena Quitora. 
 
 Este proyecto esta enfocado en el desarrollo de un administrador de tareas que permite a los usuarios crear, organizar y seguir el progreso de sus tareas y proyectos. 
 
