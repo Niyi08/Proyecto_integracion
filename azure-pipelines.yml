@@ -10,18 +10,15 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
-
+- bash: |
+    sudo mkdir $(dockerComposePath)
+    sudo curl -SL https://github.com/docker/compose/releases/download/1.29.2/docker-compose-linux-x86_64 -o $(dockerComposePath)/docker-compose
+    sudo chmod 755 $(dockerComposePath)/docker-compose
+  displayName: Download docker-compose
 - task: DockerCompose@1
   inputs:
     containerregistrytype: 'Azure Container Registry'
-    azureSubscription: 'Azure subscription 1(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
+    azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
     azureContainerRegistry: '{"loginServer":"integracioncontinuacr.azurecr.io", "id" : "/subscriptions/758c0c95-3fc7-4080-aafb-f5c945f411cb/resourceGroups/Integración_continua/providers/Microsoft.ContainerRegistry/registries/integracioncontinuacr"}'
     dockerComposeFile: '**/docker-compose.yml'
     action: 'Run a Docker Compose command'
