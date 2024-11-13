@@ -1,0 +1,27 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'
+
+- script: |
+    echo Add other tasks to build, test, and deploy your project.
+    echo See https://aka.ms/yaml
+  displayName: 'Run a multi-line script'
+
+- task: DockerCompose@1
+  inputs:
+    containerregistrytype: 'Azure Container Registry'
+    azureSubscription: 'Azure subscription 1(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
+    azureContainerRegistry: '{"loginServer":"integracioncontinuacr.azurecr.io", "id" : "/subscriptions/758c0c95-3fc7-4080-aafb-f5c945f411cb/resourceGroups/Integración_continua/providers/Microsoft.ContainerRegistry/registries/integracioncontinuacr"}'
+    dockerComposeFile: '**/docker-compose.yml'
+    action: 'Run a Docker Compose command'
