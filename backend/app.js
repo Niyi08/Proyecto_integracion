@@ -3,7 +3,6 @@ const cors = require('cors');
 const app = express();
 const PORT = 5000;
 
-
 // Datos en memoria para almacenar tareas
 let tasks = [];
 
@@ -32,6 +31,7 @@ app.delete('/tasks/:taskId', (req, res) => {
     res.json({ message: 'Task deleted!' });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+// Iniciar el servidor
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Backend running on http://0.0.0.0:${PORT}`);
 });
