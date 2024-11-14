@@ -13,7 +13,7 @@ variables:
   dockerComposeFile: 'docker-compose.yml'
   ACR_LOGIN_SERVER: "$(ACR_NAME).azurecr.io"
   ACR_USERNAME: "integracioncontinuacr"
-  ACR_PASSWORD: "$(ACR_PASSWORD)" # Variable secreta configurada en Azure DevOps
+  ACR_PASSWORD: "${env:ACR_PASSWORD}" # Variable secreta configurada en Azure DevOps
 
 steps:
 
