@@ -1,4 +1,4 @@
-# ENTREGA MODULO INTEGRACION CONTINUA 
+# ENTREGA MODULO INTEGRACION CONTINUA SEGUNDA ENTREGA
 
 # Autores: Diana Carolina Gonzalez, Niyireth Lorena Cortes, Rubio Ricardo Juragaro ,Angie Milena Quitora. 
 
