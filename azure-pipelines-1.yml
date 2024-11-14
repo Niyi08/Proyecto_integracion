@@ -1,19 +1,106 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- main
+  - main
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
+
+variables:
+  ACR_NAME: "integracioncontinuacr"
+  resourceGroup: "Integración_continua"
+  containerAppEnvName: "proyecto-app-environment"
+  lawID: "342d15ed-6054-4150-8a34-d7a86b3eda17"
+  location: "eastus"
+  dockerComposeFile: 'docker-compose.yml'
+  ACR_LOGIN_SERVER: "$(ACR_NAME).azurecr.io"
+  ACR_USERNAME: "integracioncontinuacr"
+  ACR_PASSWORD: "$(ACR_PASSWORD)" # Variable secreta configurada en Azure DevOps
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  # Instala las dependencias (incluido cors) antes de construir la imagen
+  - script: |
+      npm install cors  # Instalar cors
+      npm install       # Instalar todas las dependencias necesarias
+    displayName: 'Install Dependencies (including cors)'
+    
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        az acr login --name $(ACR_NAME)
+    displayName: 'Login to Azure Container Registry (ACR)'
+
+  - task: DockerCompose@1
+    inputs:
+      containerregistrytype: 'Azure Container Registry'
+      azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
+      azureContainerRegistry: '{"loginServer":"$(ACR_LOGIN_SERVER)", "id" : "/subscriptions/758c0c95-3fc7-4080-aafb-f5c945f411cb/resourceGroups/Integración_continua/providers/Microsoft.ContainerRegistry/registries/$(ACR_NAME)"}'
+      dockerComposeFile: '$(dockerComposeFile)'
+      action: 'Build services'
+      projectName: 'proyecto_integracion'
+    displayName: 'Build Docker Images'
+
+  - task: DockerCompose@1
+    inputs:
+      containerregistrytype: 'Azure Container Registry'
+      azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
+      azureContainerRegistry: '{"loginServer":"$(ACR_LOGIN_SERVER)", "id" : "/subscriptions/758c0c95-3fc7-4080-aafb-f5c945f411cb/resourceGroups/Integración_continua/providers/Microsoft.ContainerRegistry/registries/$(ACR_NAME)"}'
+      dockerComposeFile: '$(dockerComposeFile)'
+      action: 'Push services'
+      projectName: 'proyecto_integracion'
+    displayName: 'Push Docker Images to ACR'
+
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        az containerapp env create \
+          --name $(containerAppEnvName) \
+          --resource-group $(resourceGroup) \
+          --logs-workspace-id $(lawID) \
+          --location $(location)
+    displayName: 'Create Container Apps Environment'
+
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        az containerapp create \
+          --name backend-test \
+          --resource-group $(resourceGroup) \
+          --environment $(containerAppEnvName) \
+          --image $(ACR_LOGIN_SERVER)/proyecto_integracion/backend:latest \
+          --target-port 5000 \
+          --ingress external \
+          --cpu 0.5 \
+          --memory 1.0Gi \
+          --registry-server $(ACR_LOGIN_SERVER) \
+          --registry-username $(ACR_USERNAME) \
+          --registry-password $(ACR_PASSWORD)
+    displayName: 'Deploy Backend to Azure Container Apps'
+
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        az containerapp create \
+          --name frontend-test \
+          --resource-group $(resourceGroup) \
+          --environment $(containerAppEnvName) \
+          --image $(ACR_LOGIN_SERVER)/proyecto_integracion/frontend:latest \
+          --target-port 80 \
+          --ingress external \
+          --cpu 0.5 \
+          --memory 1.0Gi \
+          --registry-server $(ACR_LOGIN_SERVER) \
+          --registry-username $(ACR_USERNAME) \
+          --registry-password $(ACR_PASSWORD)
+    displayName: 'Deploy Frontend to Azure Container Apps'
