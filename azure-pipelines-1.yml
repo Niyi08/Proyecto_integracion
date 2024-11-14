@@ -74,7 +74,7 @@ steps:
           --name backend-test \
           --resource-group $(resourceGroup) \
           --environment $(containerAppEnvName) \
-          --image $(ACR_LOGIN_SERVER)/proyecto_integracion/backend:latest \
+          --image $(ACR_LOGIN_SERVER)/proyecto_integracion/proyectointegracion_backend:latest \
           --target-port 5000 \
           --ingress external \
           --cpu 0.5 \
@@ -95,7 +95,7 @@ steps:
           --name frontend-test \
           --resource-group $(resourceGroup) \
           --environment $(containerAppEnvName) \
-          --image $(ACR_LOGIN_SERVER)/proyecto_integracion/frontend:latest \
+          --image $(ACR_LOGIN_SERVER)/proyecto_integracion/proyectointegracion_frontend:latest \
           --target-port 80 \
           --ingress external \
           --cpu 0.5 \
