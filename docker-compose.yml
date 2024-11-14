@@ -1,14 +1,19 @@
-version: '3'
 services:
   backend:
-    build: ./backend
+    build:
+      context: ./backend  # Ruta del directorio donde se encuentra el Dockerfile del backend
+      dockerfile: Dockerfile  # Dockerfile específico del backend
+    image: integracioncontinuacr.azurecr.io/proyecto_integracion/backend:latest
     ports:
       - "5000:5000"
     networks:
       - app-network
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend  # Ruta del directorio donde se encuentra el Dockerfile del frontend
+      dockerfile: Dockerfile  # Dockerfile específico del frontend
+    image: integracioncontinuacr.azurecr.io/proyecto_integracion/frontend:latest
     ports:
       - "80:80"
     networks:
