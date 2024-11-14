@@ -14,25 +14,24 @@ variables:
   ACR_LOGIN_SERVER: "$(ACR_NAME).azurecr.io"
 
 steps:
-  
-  # Extraer las credenciales y almacenarlas como variables
+
+  # Tarea para obtener el nombre de usuario y la contraseña del ACR
   - task: AzureCLI@2
     inputs:
       azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        # Asignar las credenciales a variables desde Azure DevOps
-        echo "##vso[task.setvariable variable=ACR_USERNAME;]$(ACR_USERNAME)"
-        echo "##vso[task.setvariable variable=ACR_PASSWORD;]$(ACR_PASSWORD)"
-    displayName: 'Set ACR Credentials as Variables'
+        # Obtener las credenciales del Azure Container Registry (ACR)
+        ACR_USERNAME=$(az acr credential show --name $(ACR_NAME) --query "username" -o tsv)
+        ACR_PASSWORD=$(az acr credential show --name $(ACR_NAME) --query "passwords[0].value" -o tsv)
 
-  # Instalar dependencias (incluido cors) antes de construir la imagen
-  - script: |
-      npm install cors  # Instalar cors
-      npm install       # Instalar todas las dependencias necesarias
-    displayName: 'Install Dependencies (including cors)'
+        # Establecer las variables de entorno con los valores obtenidos
+        echo "##vso[task.setvariable variable=ACR_USERNAME]$ACR_USERNAME"
+        echo "##vso[task.setvariable variable=ACR_PASSWORD]$ACR_PASSWORD"
+    displayName: 'Get ACR Credentials'
 
+  # Tarea para hacer login en el ACR
   - task: AzureCLI@2
     inputs:
       azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
@@ -42,6 +41,7 @@ steps:
         az acr login --name $(ACR_NAME)
     displayName: 'Login to Azure Container Registry (ACR)'
 
+  # Tarea para construir las imágenes usando Docker Compose
   - task: DockerCompose@1
     inputs:
       containerregistrytype: 'Azure Container Registry'
@@ -52,6 +52,7 @@ steps:
       projectName: 'proyecto_integracion'
     displayName: 'Build Docker Images'
 
+  # Tarea para hacer push de las imágenes al ACR
   - task: DockerCompose@1
     inputs:
       containerregistrytype: 'Azure Container Registry'
@@ -62,19 +63,7 @@ steps:
       projectName: 'proyecto_integracion'
     displayName: 'Push Docker Images to ACR'
 
-  - task: AzureCLI@2
-    inputs:
-      azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
-      scriptType: 'bash'
-      scriptLocation: 'inlineScript'
-      inlineScript: |
-        az containerapp env create \
-          --name $(containerAppEnvName) \
-          --resource-group $(resourceGroup) \
-          --logs-workspace-id $(lawID) \
-          --location $(location)
-    displayName: 'Create Container Apps Environment'
-
+  # Tarea para desplegar el Backend a Azure Container Apps
   - task: AzureCLI@2
     inputs:
       azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
@@ -95,6 +84,7 @@ steps:
           --registry-password $(ACR_PASSWORD)
     displayName: 'Deploy Backend to Azure Container Apps'
 
+  # Tarea para desplegar el Frontend a Azure Container Apps
   - task: AzureCLI@2
     inputs:
       azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
