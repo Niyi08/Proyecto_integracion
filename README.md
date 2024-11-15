@@ -1,12 +1,15 @@
-# ENTREGA MODULO INTEGRACION CONTINUA 
+# ENTREGA MODULO INTEGRACION CONTINUA SEGUNDA ENTREGA 
 
 # Autores: Diana Carolina Gonzalez, Niyireth Lorena Cortes, Rubio Ricardo Juragaro ,Angie Milena Quitora. 
 
 Este proyecto esta enfocado en el desarrollo de un administrador de tareas que permite a los usuarios crear, organizar y seguir el progreso de sus tareas y proyectos. 
+Se crearon dos contenedores para la aplicacion NodeJS tanto para front como para backend ya enfocados en la integracion continua. 
 
 ## Indice 
 Carpeta de backend 
 Carpeta de frontend
+Azure pipelines
+Docker compose 
 
 
 ## Caracteristicas 
@@ -23,8 +26,11 @@ Comunicación entre Contenedores: Uso de docker-compose.yml para definir servici
 
 Facilidad de Pruebas: Acceso al frontend en http://localhost:5000 para verificar la interacción y la comunicación con la API del backend. 
 
-## Requisitos
+Integracion continua: Mejorar el proceso de desarrollo de software de diversas maneras, principalmente para garantizar que el código se mantenga de alta calidad
 
+## Requisitos
+Azure - Azure DevOps 
+Azure Container Apps 
 Node. JS v20.15.1 o superior
 Entorno de desarrollo (Visual Studio Code)
 
