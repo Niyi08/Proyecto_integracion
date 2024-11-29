@@ -15,6 +15,19 @@ variables:
 
 steps:
 
+  - task: SonarCloudPrepare@3
+    inputs:
+      SonarQube: 'sonarqube'
+      organization: 'pruebas2022'
+      scannerMode: 'cli'
+      configMode: 'manual'
+      cliProjectKey: 'Pruebas2022_proyecto_integracion'
+      cliProjectName: 'proyecto_integracion'
+      cliSources: '.'
+  
+  - task: SonarCloudAnalyze@3
+    inputs:
+      jdkversion: 'JAVA_HOME_17_X64'
   # Tarea para obtener el nombre de usuario y la contraseña del ACR
   - task: AzureCLI@2
     inputs:
