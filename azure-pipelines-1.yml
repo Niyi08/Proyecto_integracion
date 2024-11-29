@@ -15,11 +15,6 @@ variables:
 
 steps:
 
-  # Instalar dependencias del proyecto
-  - script: |
-      npm install
-    displayName: 'Install dependencies'
-
   # Preparar SonarCloud para análisis
   - task: SonarCloudPrepare@3
     inputs:
