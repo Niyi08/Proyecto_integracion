@@ -15,7 +15,24 @@ variables:
 
 steps:
 
-  # Tarea para obtener el nombre de usuario y la contraseña del ACR
+  # Preparar SonarCloud para análisis
+  - task: SonarCloudPrepare@3
+    inputs:
+      SonarQube: 'sonarqube'
+      organization: 'pruebas2022'
+      scannerMode: 'cli'
+      configMode: 'manual'
+      cliProjectKey: 'Pruebas2022_proyecto_integracion'
+      cliProjectName: 'proyecto_integracion'
+      cliSources: '.'
+
+  # Ejecutar análisis de SonarCloud
+  - task: SonarCloudAnalyze@3
+    inputs:
+      jdkversion: 'JAVA_HOME_17_X64'
+    displayName: 'Analyze with SonarCloud'
+
+  # Obtener credenciales de Azure Container Registry (ACR)
   - task: AzureCLI@2
     inputs:
       azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
@@ -31,7 +48,7 @@ steps:
         echo "##vso[task.setvariable variable=ACR_PASSWORD]$ACR_PASSWORD"
     displayName: 'Get ACR Credentials'
 
-  # Tarea para hacer login en el ACR
+  # Login en el ACR
   - task: AzureCLI@2
     inputs:
       azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
@@ -41,7 +58,7 @@ steps:
         az acr login --name $(ACR_NAME)
     displayName: 'Login to Azure Container Registry (ACR)'
 
-  # Tarea para construir las imágenes usando Docker Compose
+  # Construir las imágenes usando Docker Compose
   - task: DockerCompose@1
     inputs:
       containerregistrytype: 'Azure Container Registry'
@@ -52,7 +69,7 @@ steps:
       projectName: 'proyecto_integracion'
     displayName: 'Build Docker Images'
 
-  # Tarea para hacer push de las imágenes al ACR
+  # Push de las imágenes al ACR
   - task: DockerCompose@1
     inputs:
       containerregistrytype: 'Azure Container Registry'
@@ -63,7 +80,7 @@ steps:
       projectName: 'proyecto_integracion'
     displayName: 'Push Docker Images to ACR'
 
-  # Tarea para desplegar el Backend a Azure Container Apps
+  # Desplegar el Backend a Azure Container Apps
   - task: AzureCLI@2
     inputs:
       azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
@@ -84,7 +101,7 @@ steps:
           --registry-password $(ACR_PASSWORD)
     displayName: 'Deploy Backend to Azure Container Apps'
 
-  # Tarea para desplegar el Frontend a Azure Container Apps
+  # Desplegar el Frontend a Azure Container Apps
   - task: AzureCLI@2
     inputs:
       azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
