@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> 90d295f16dd218c1b567b8307b9a87e5895a0ba9
 # ENTREGA MODULO INTEGRACION CONTINUA SEGUNDA ENTREGA
 
 # Autores: Diana Carolina Gonzalez, Niyireth Lorena Cortes, Rubio Ricardo Juragaro ,Angie Milena Quitora. 
