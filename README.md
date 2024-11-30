@@ -1,9 +1,9 @@
-# ENTREGA MODULO INTEGRACION CONTINUA SEGUNDA ENTREGA
+# ENTREGA FINAL INTEGRACION CONTINUA 
 
 # Autores: Diana Carolina Gonzalez, Niyireth Lorena Cortes, Rubio Ricardo Juragaro ,Angie Milena Quitora. 
 
-Este proyecto esta enfocado en el desarrollo de un administrador de tareas que permite a los usuarios crear, organizar y seguir el progreso de sus tareas y proyectos. 
-Se crearon dos contenedores para la aplicacion NodeJS tanto para front como para backend ya enfocados en la integracion continua. 
+El objetivo de este proyecto es implementar un sistema de Integración Continua (CI) que automatice y optimice los procesos de desarrollo y despliegue de aplicaciones. Para ello, se utilizarán herramientas 
+como Azure DevOps, Docker, SonarQube, Sentry y Jira, con el fin de asegurar la calidad del código, detectar errores de forma temprana y mejorar la eficiencia del flujo de trabajo.
 
 ## Indice 
 Carpeta de backend 
@@ -32,7 +32,12 @@ Integracion continua: Mejorar el proceso de desarrollo de software de diversas m
 Azure - Azure DevOps 
 Azure Container Apps 
 Node. JS v20.15.1 o superior
+Jira - SonarQube
+Git hub
 Entorno de desarrollo (Visual Studio Code)
+
+## Herramientas adicionales usadas: 
+Azure Container Registry, Azure Log Analtytics y Azure Container Apps. 
 
 ### Instalacion 
 
