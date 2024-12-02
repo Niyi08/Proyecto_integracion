@@ -1,4 +1,4 @@
-# ENTREGA FINAL INTEGRACION CONTINUA 
+# ENTREGA FINAL INTEGRACION CONTINUA JIRA
 
 # Autores: Diana Carolina Gonzalez, Niyireth Lorena Cortes, Rubio Ricardo Juragaro ,Angie Milena Quitora. 
 
