@@ -24,7 +24,12 @@ Frontend Servido con Nginx: Configuración de un contenedor Nginx para servir la
 
 Comunicación entre Contenedores: Uso de docker-compose.yml para definir servicios y establecer la comunicación entre el frontend y el backend.
 
-Facilidad de Pruebas: Acceso al frontend en http://localhost:5000 para verificar la interacción y la comunicación con la API del backend. 
+Facilidad de Pruebas desde local: Acceso al frontend en http://localhost:5000 para verificar la interacción y la comunicación con la API del backend. 
+
+Endpoints:
+
+Back: https://backend-test.grayriver-4c4e07ce.eastus.azurecontainerapps.io/tasks
+Front: https://frontend-test.grayriver-4c4e07ce.eastus.azurecontainerapps.io/
 
 Integracion continua: Mejorar el proceso de desarrollo de software de diversas maneras, principalmente para garantizar que el código se mantenga de alta calidad
 
