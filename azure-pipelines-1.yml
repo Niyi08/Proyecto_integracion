@@ -144,7 +144,7 @@ steps:
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        az containerapp create \
+        az containerapp update \
           --name frontend-test \
           --resource-group $(resourceGroup) \
           --environment $(containerAppEnvName) \
