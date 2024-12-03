@@ -4,7 +4,8 @@
   "description": "Backend API for managing tasks",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
     "cors": "^2.8.5",
