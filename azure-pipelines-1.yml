@@ -24,13 +24,14 @@ steps:
   - task: Npm@1
     inputs:
       command: 'install'
-      workingDir: '$(Build.SourcesDirectory)/backend'
+      workingDir: '$(System.DefaultWorkingDirectory)/backend'
 
   # Paso 3: Ejecutar pruebas con cobertura
-  - task: npm@1
+  - task: Npm@1
     inputs:
       command: 'custom'
-      customCommand: 'test -- --coverage'  # Ejecuta las pruebas con cobertura y genera el informe
+      workingDir: '$(System.DefaultWorkingDirectory)/backend'
+      customCommand: 'test -- --coverage'
 
   # Paso 4: Publicar los artefactos de la build (código y cobertura)
   - task: PublishBuildArtifacts@1
