@@ -41,6 +41,11 @@ app.delete('/tasks/:taskId', (req, res) => {
 // Middleware de Sentry para manejar errores
 app.use(Sentry.Handlers.errorHandler());
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+// Exporta la aplicación para las pruebas
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server is running on http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app; // Exporta la aplicación para las pruebas
