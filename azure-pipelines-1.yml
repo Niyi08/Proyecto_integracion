@@ -1,3 +1,4 @@
+
 trigger:
   - main  # Se ejecuta cuando haya cambios en la rama 'main'
 
@@ -33,7 +34,6 @@ steps:
       workingDir: '$(System.DefaultWorkingDirectory)/backend'
       customCommand: 'test -- --coverage'
 
-
   # Nueva tarea para revisar si la salida muestra que se generó el archivo de cobertura
   - task: Bash@3
     inputs:
@@ -50,6 +50,7 @@ steps:
       publishLocation: 'Container'  # Publica los artefactos generados durante la build
       targetPath: '$(Build.SourcesDirectory)/backend/coverage/lcov-report'
 
+
   # Paso 5: Preparar análisis en SonarCloud
   - task: SonarCloudPrepare@3
     inputs:
@@ -61,7 +62,7 @@ steps:
       cliProjectName: 'proyecto_integracion'
       cliSources: '.'
       extraProperties: |
-        sonar.javascript.lcov.reportPaths=backend/coverage/lcov-report/lcov-info,frontend/coverage/lcov-report/lcov-info
+        sonar.javascript.lcov.reportPaths=backend/coverage/lcov-report/lcov.info
         sonar.exclusions=**/node_modules/**
 
   # Paso 6: Analizar con SonarCloud
