@@ -1,3 +1,4 @@
+
 trigger:
   - main  # Se ejecuta cuando haya cambios en la rama 'main'
 
@@ -61,7 +62,7 @@ steps:
       cliProjectName: 'proyecto_integracion'
       cliSources: '.'
       extraProperties: |
-        sonar.javascript.lcov.reportPaths=backend/coverage/lcov.info
+        sonar.javascript.lcov.reportPaths=backend/coverage/lcov-report/lcov.info
         sonar.exclusions=**/node_modules/**
 
   # Paso 6: Analizar con SonarCloud
