@@ -47,6 +47,8 @@ steps:
     inputs:
       artifactName: 'drop'
       publishLocation: 'Container'  # Publica los artefactos generados durante la build
+      targetPath: '$(Build.SourcesDirectory)/backend/coverage/lcov-report'
+
 
   # Paso 5: Preparar análisis en SonarCloud
   - task: SonarCloudPrepare@3
