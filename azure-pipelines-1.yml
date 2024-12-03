@@ -21,9 +21,10 @@ steps:
       versionSpec: '16.x'
 
   # Paso 2: Instalar dependencias con npm
-  - task: npm@1
+  - task: Npm@1
     inputs:
-      command: 'install'  # Instala las dependencias de Node.js, incluyendo Jest y Supertest
+      command: 'install'
+      workingDir: 'backend'
 
   # Paso 3: Ejecutar pruebas con cobertura
   - task: npm@1
