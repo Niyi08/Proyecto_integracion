@@ -41,13 +41,6 @@ steps:
         echo "Listing files in the root directory to check the output"
         ls -l backend/coverage/
         
-  # Nueva tarea para verificar la existencia del archivo lcov.info
-  - task: Bash@3
-    inputs:
-      targetType: 'inline'
-      script: |
-        echo "Listing files in the coverage directory:"
-        ls -l coverage/
 
   # Paso 4: Publicar los artefactos de la build (código y cobertura)
   - task: PublishBuildArtifacts@1
@@ -66,7 +59,7 @@ steps:
       cliProjectName: 'proyecto_integracion'
       cliSources: '.'
       extraProperties: |
-        sonar.javascript.lcov.reportPaths=coverage/lcov.info
+        sonar.javascript.lcov.reportPaths=lcov-report/lcov.info
         sonar.exclusions=**/node_modules/**
 
   # Paso 6: Analizar con SonarCloud
