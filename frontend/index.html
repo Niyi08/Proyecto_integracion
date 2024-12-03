@@ -51,6 +51,12 @@
             padding: 10px;
             border-radius: 4px;
         }
+
+        .last-update {
+            margin-top: 20px;
+            font-style: italic;
+            color: #555;
+        }
     </style>
 </head>
 <body>
@@ -59,6 +65,34 @@
     <button onclick="addTask()">Add Task</button>
     <ul id="taskList"></ul>
 
-    <script src="script.js"></script>
+    <!-- Add last update time to see changes -->
+    <div class="last-update" id="lastUpdate">Last updated: Never</div>
+
+    <script>
+        // Function to add a task (simulated for now)
+        function addTask() {
+            const taskInput = document.getElementById('taskInput');
+            const task = taskInput.value;
+            if (task) {
+                const taskList = document.getElementById('taskList');
+                const li = document.createElement('li');
+                li.textContent = task;
+                taskList.appendChild(li);
+                taskInput.value = ''; // Clear input after adding task
+            }
+        }
+
+        // Function to update the last updated time
+        function updateLastUpdate() {
+            const lastUpdateDiv = document.getElementById('lastUpdate');
+            const currentTime = new Date().toLocaleString();
+            lastUpdateDiv.textContent = `Last updated: ${currentTime}`;
+        }
+
+        // Call update function on page load to reflect current time
+        window.onload = function() {
+            updateLastUpdate();
+        };
+    </script>
 </body>
 </html>
