@@ -33,6 +33,14 @@ steps:
       workingDir: '$(System.DefaultWorkingDirectory)/backend'
       customCommand: 'test -- --coverage'
 
+  # Nueva tarea para revisar si la salida muestra que se generó el archivo de cobertura
+  - task: Bash@3
+    inputs:
+      targetType: 'inline'
+      script: |
+        echo "Listing files in the root directory to check the output"
+        ls -l
+        
   # Nueva tarea para verificar la existencia del archivo lcov.info
   - task: Bash@3
     inputs:
