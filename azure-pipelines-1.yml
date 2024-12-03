@@ -15,14 +15,21 @@ variables:
 
 steps:
   # Instalar dependencias
+  # Descargar el código fuente
+
+  # Verificar el directorio y listar archivos
+  - script: |
+      pwd
+      ls -la
+    displayName: 'Check Current Directory and Files'
+
+  # Cambiar al directorio 'backend' y ejecutar npm
   - script: |
       npm install
-    displayName: 'Install dependencies'
-
-  # Ejecutar pruebas y generar informe de cobertura
-  - script: |
       npm test -- --coverage
+    workingDirectory: 'backend'
     displayName: 'Run Tests and Generate Coverage Report'
+
 
   # Preparar SonarCloud para análisis
   - task: SonarCloudPrepare@3
