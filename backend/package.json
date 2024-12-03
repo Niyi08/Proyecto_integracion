@@ -17,7 +17,10 @@
     "supertest": "^6.3.3"
   },
   "jest": {
+    "testEnvironment": "node",
     "collectCoverage": true,
-    "coverageReporters": ["lcov", "text"]
+    "coverageDirectory": "coverage",
+    "coverageReporters": ["lcov", "text"],
+    "testMatch": ["**/tests/**/*.test.js"]
   }
 }
