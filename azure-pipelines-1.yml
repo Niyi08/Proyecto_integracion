@@ -42,14 +42,16 @@ steps:
   # Paso 5: Preparar análisis en SonarCloud
   - task: SonarCloudPrepare@3
     inputs:
-      SonarQube: 'sonarqube'  # Conexión a SonarCloud configurada en Azure DevOps
-      organization: 'pruebas2022'  # Tu organización en SonarCloud
-      scannerMode: 'cli'  # Modo CLI para el análisis
-      configMode: 'manual'  # Configuración manual de parámetros
-      cliProjectKey: 'Pruebas2022_proyecto_integracion'  # Clave del proyecto en SonarCloud
-      cliProjectName: 'proyecto_integracion'  # Nombre del proyecto en SonarCloud
-      cliSources: '.'  # Carpeta con el código fuente (directorio raíz)
-      extraProperties: 'sonar.javascript.lcov.reportPaths=coverage/lcov.info'  # Ruta al archivo de cobertura lcov.info
+      SonarQube: 'sonarqube'
+      organization: 'pruebas2022'
+      scannerMode: 'cli'
+      configMode: 'manual'
+      cliProjectKey: 'Pruebas2022_proyecto_integracion'
+      cliProjectName: 'proyecto_integracion'
+      cliSources: '.'
+      extraProperties: |
+        sonar.javascript.lcov.reportPaths=coverage/lcov.info
+        sonar.exclusions=**/node_modules/**
 
   # Paso 6: Analizar con SonarCloud
   - task: SonarCloudAnalyze@3
