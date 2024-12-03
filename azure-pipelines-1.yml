@@ -1,106 +1,109 @@
 trigger:
-  - main
+  - main  # Se ejecuta cuando haya cambios en la rama 'main'
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'ubuntu-latest'  # Usa la imagen de Ubuntu más reciente para la ejecución del pipeline
 
 variables:
-  ACR_NAME: "integracioncontinuacr"
-  resourceGroup: "Integración_continua"
-  containerAppEnvName: "proyecto-app-environment"
-  lawID: "342d15ed-6054-4150-8a34-d7a86b3eda17"
-  location: "eastus"
-  dockerComposeFile: 'docker-compose.yml'
-  ACR_LOGIN_SERVER: "$(ACR_NAME).azurecr.io"
+  ACR_NAME: "integracioncontinuacr"  # Nombre del Azure Container Registry
+  resourceGroup: "Integración_continua"  # Nombre del grupo de recursos en Azure
+  containerAppEnvName: "proyecto-app-environment"  # Nombre del entorno de Azure Container Apps
+  lawID: "342d15ed-6054-4150-8a34-d7a86b3eda17"  # ID del Log Analytics Workspace (LAW) de Azure
+  location: "eastus"  # Región de Azure donde se desplegarán los recursos
+  dockerComposeFile: 'docker-compose.yml'  # Archivo de configuración de Docker Compose
+  ACR_LOGIN_SERVER: "$(ACR_NAME).azurecr.io"  # URL del Azure Container Registry
 
 steps:
-  # Instalar dependencias
-  # Descargar el código fuente
+  # Paso 1: Usar Node.js
+  - task: NodeTool@0
+    inputs:
+      versionSource: 'spec'
+      versionSpec: '16.x'
 
-  # Verificar el directorio y listar archivos
-  - script: |
-      pwd
-      ls -la
-    displayName: 'Check Current Directory and Files'
+  # Paso 2: Instalar dependencias con npm
+  - task: npm@1
+    inputs:
+      command: 'install'  # Instala las dependencias de Node.js, incluyendo Jest y Supertest
 
-  # Cambiar al directorio 'backend' y ejecutar npm
-  - script: |
-      npm install
-      npm test -- --coverage
-    workingDirectory: 'backend'
-    displayName: 'Run Tests and Generate Coverage Report'
+  # Paso 3: Ejecutar pruebas con cobertura
+  - task: npm@1
+    inputs:
+      command: 'custom'
+      customCommand: 'test -- --coverage'  # Ejecuta las pruebas con cobertura y genera el informe
 
+  # Paso 4: Publicar los artefactos de la build (código y cobertura)
+  - task: PublishBuildArtifacts@1
+    inputs:
+      artifactName: 'drop'
+      publishLocation: 'Container'  # Publica los artefactos generados durante la build
 
-  # Preparar SonarCloud para análisis
+  # Paso 5: Preparar análisis en SonarCloud
   - task: SonarCloudPrepare@3
     inputs:
-      SonarQube: 'sonarqube'
-      organization: 'pruebas2022'
-      scannerMode: 'cli'
-      configMode: 'manual'
-      cliProjectKey: 'Pruebas2022_proyecto_integracion'
-      cliProjectName: 'proyecto_integracion'
-      cliSources: '.'
-      extraProperties: 'sonar.javascript.lcov.reportPaths=coverage/lcov.info'
+      SonarQube: 'sonarqube'  # Conexión a SonarCloud configurada en Azure DevOps
+      organization: 'pruebas2022'  # Tu organización en SonarCloud
+      scannerMode: 'cli'  # Modo CLI para el análisis
+      configMode: 'manual'  # Configuración manual de parámetros
+      cliProjectKey: 'Pruebas2022_proyecto_integracion'  # Clave del proyecto en SonarCloud
+      cliProjectName: 'proyecto_integracion'  # Nombre del proyecto en SonarCloud
+      cliSources: '.'  # Carpeta con el código fuente (directorio raíz)
+      extraProperties: 'sonar.javascript.lcov.reportPaths=coverage/lcov.info'  # Ruta al archivo de cobertura lcov.info
 
-  # Ejecutar análisis de SonarCloud
+  # Paso 6: Analizar con SonarCloud
   - task: SonarCloudAnalyze@3
     inputs:
-      jdkversion: 'JAVA_HOME_17_X64'
+      jdkversion: 'JAVA_HOME_17_X64'  # Versión de JDK (aunque es Java, se requiere para el análisis en SonarCloud)
     displayName: 'Analyze with SonarCloud'
 
-  # Obtener credenciales de Azure Container Registry (ACR)
+  # Paso 7: Obtener credenciales de Azure Container Registry (ACR)
   - task: AzureCLI@2
     inputs:
-      azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
+      azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'  # Suscripción de Azure
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        # Obtener las credenciales del Azure Container Registry (ACR)
         ACR_USERNAME=$(az acr credential show --name $(ACR_NAME) --query "username" -o tsv)
         ACR_PASSWORD=$(az acr credential show --name $(ACR_NAME) --query "passwords[0].value" -o tsv)
-
-        # Establecer las variables de entorno con los valores obtenidos
         echo "##vso[task.setvariable variable=ACR_USERNAME]$ACR_USERNAME"
         echo "##vso[task.setvariable variable=ACR_PASSWORD]$ACR_PASSWORD"
     displayName: 'Get ACR Credentials'
 
-  # Login en el ACR
+  # Paso 8: Login en Azure Container Registry (ACR)
   - task: AzureCLI@2
     inputs:
-      azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
+      azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'  # Suscripción de Azure
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
         az acr login --name $(ACR_NAME)
     displayName: 'Login to Azure Container Registry (ACR)'
 
-  # Construir las imágenes usando Docker Compose
+  # Paso 9: Construir las imágenes Docker con Docker Compose
   - task: DockerCompose@1
     inputs:
       containerregistrytype: 'Azure Container Registry'
-      azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
+      azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'  # Suscripción de Azure
       azureContainerRegistry: '{"loginServer":"$(ACR_LOGIN_SERVER)", "id" : "/subscriptions/758c0c95-3fc7-4080-aafb-f5c945f411cb/resourceGroups/Integración_continua/providers/Microsoft.ContainerRegistry/registries/$(ACR_NAME)"}'
-      dockerComposeFile: '$(dockerComposeFile)'
-      action: 'Build services'
+      dockerComposeFile: '$(dockerComposeFile)'  # Ruta al archivo docker-compose.yml
+      action: 'Build services'  # Acción para construir las imágenes
       projectName: 'proyecto_integracion'
     displayName: 'Build Docker Images'
 
-  # Push de las imágenes al ACR
+  # Paso 10: Push de las imágenes a Azure Container Registry
   - task: DockerCompose@1
     inputs:
       containerregistrytype: 'Azure Container Registry'
-      azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
+      azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'  # Suscripción de Azure
       azureContainerRegistry: '{"loginServer":"$(ACR_LOGIN_SERVER)", "id" : "/subscriptions/758c0c95-3fc7-4080-aafb-f5c945f411cb/resourceGroups/Integración_continua/providers/Microsoft.ContainerRegistry/registries/$(ACR_NAME)"}'
-      dockerComposeFile: '$(dockerComposeFile)'
-      action: 'Push services'
+      dockerComposeFile: '$(dockerComposeFile)'  # Ruta al archivo docker-compose.yml
+      action: 'Push services'  # Acción para hacer push de las imágenes a ACR
       projectName: 'proyecto_integracion'
     displayName: 'Push Docker Images to ACR'
 
-  # Desplegar el Backend a Azure Container Apps
+  # Paso 11: Desplegar el Backend a Azure Container Apps
   - task: AzureCLI@2
     inputs:
-      azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
+      azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'  # Suscripción de Azure
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
@@ -118,10 +121,10 @@ steps:
           --registry-password $(ACR_PASSWORD)
     displayName: 'Deploy Backend to Azure Container Apps'
 
-  # Desplegar el Frontend a Azure Container Apps
+  # Paso 12: Desplegar el Frontend a Azure Container Apps
   - task: AzureCLI@2
     inputs:
-      azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'
+      azureSubscription: 'Azure subscription 1(1)(758c0c95-3fc7-4080-aafb-f5c945f411cb)'  # Suscripción de Azure
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
