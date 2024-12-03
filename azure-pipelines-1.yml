@@ -24,7 +24,7 @@ steps:
   - task: Npm@1
     inputs:
       command: 'install'
-      workingDir: 'backend'
+      workingDir: '$(Build.SourcesDirectory)/backend'
 
   # Paso 3: Ejecutar pruebas con cobertura
   - task: npm@1
