@@ -33,6 +33,14 @@ steps:
       workingDir: '$(System.DefaultWorkingDirectory)/backend'
       customCommand: 'test -- --coverage'
 
+  # Nueva tarea para verificar la existencia del archivo lcov.info
+  - task: Bash@3
+    inputs:
+      targetType: 'inline'
+      script: |
+        echo "Listing files in the coverage directory:"
+        ls -l coverage/
+
   # Paso 4: Publicar los artefactos de la build (código y cobertura)
   - task: PublishBuildArtifacts@1
     inputs:
