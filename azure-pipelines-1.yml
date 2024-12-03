@@ -41,7 +41,6 @@ steps:
       script: |
         echo "Listing files in the root directory to check the output"
         ls -l backend/coverage/
-        ls -l frontend/coverage/
         
 
   # Paso 4: Publicar los artefactos de la build (código y cobertura)
@@ -50,13 +49,6 @@ steps:
       artifactName: 'drop'
       publishLocation: 'Container'  # Publica los artefactos generados durante la build
       targetPath: '$(Build.SourcesDirectory)/backend/coverage/lcov-report'
-
-  - task: PublishBuildArtifacts@1
-    inputs:
-      artifactName: 'frontend-coverage'
-      publishLocation: 'Container'  # Publica los artefactos generados durante la build
-      targetPath: '$(Build.SourcesDirectory)/frontend/coverage/lcov-report'  # Frontend
-
 
   # Paso 5: Preparar análisis en SonarCloud
   - task: SonarCloudPrepare@3
