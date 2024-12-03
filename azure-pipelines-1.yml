@@ -39,7 +39,7 @@ steps:
       targetType: 'inline'
       script: |
         echo "Listing files in the root directory to check the output"
-        ls -l
+        ls -l backend/
         
   # Nueva tarea para verificar la existencia del archivo lcov.info
   - task: Bash@3
