@@ -33,6 +33,12 @@ steps:
       workingDir: '$(System.DefaultWorkingDirectory)/backend'
       customCommand: 'test -- --coverage'
 
+  - task: Npm@1
+    inputs:
+      command: 'custom'
+      workingDir: '$(System.DefaultWorkingDirectory)/frontend'
+      customCommand: 'test -- --coverage'
+
   # Nueva tarea para revisar si la salida muestra que se generó el archivo de cobertura
   - task: Bash@3
     inputs:
@@ -40,6 +46,7 @@ steps:
       script: |
         echo "Listing files in the root directory to check the output"
         ls -l backend/coverage/
+        ls -l frontend/coverage/
         
 
   # Paso 4: Publicar los artefactos de la build (código y cobertura)
@@ -48,6 +55,12 @@ steps:
       artifactName: 'drop'
       publishLocation: 'Container'  # Publica los artefactos generados durante la build
       targetPath: '$(Build.SourcesDirectory)/backend/coverage/lcov-report'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      artifactName: 'frontend-coverage'
+      publishLocation: 'Container'  # Publica los artefactos generados durante la build
+      targetPath: '$(Build.SourcesDirectory)/frontend/coverage/lcov-report'  # Frontend
 
 
   # Paso 5: Preparar análisis en SonarCloud
@@ -61,7 +74,7 @@ steps:
       cliProjectName: 'proyecto_integracion'
       cliSources: '.'
       extraProperties: |
-        sonar.javascript.lcov.reportPaths=backend/coverage/lcov.info
+        sonar.javascript.lcov.reportPaths=backend/coverage/lcov-report/lcov-info,frontend/coverage/lcov-report/lcov-info
         sonar.exclusions=**/node_modules/**
 
   # Paso 6: Analizar con SonarCloud
