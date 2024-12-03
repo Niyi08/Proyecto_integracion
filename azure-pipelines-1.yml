@@ -14,6 +14,15 @@ variables:
   ACR_LOGIN_SERVER: "$(ACR_NAME).azurecr.io"
 
 steps:
+  # Instalar dependencias
+  - script: |
+      npm install
+    displayName: 'Install dependencies'
+
+  # Ejecutar pruebas y generar informe de cobertura
+  - script: |
+      npm test -- --coverage
+    displayName: 'Run Tests and Generate Coverage Report'
 
   # Preparar SonarCloud para análisis
   - task: SonarCloudPrepare@3
@@ -25,6 +34,7 @@ steps:
       cliProjectKey: 'Pruebas2022_proyecto_integracion'
       cliProjectName: 'proyecto_integracion'
       cliSources: '.'
+      extraProperties: 'sonar.javascript.lcov.reportPaths=coverage/lcov.info'
 
   # Ejecutar análisis de SonarCloud
   - task: SonarCloudAnalyze@3
